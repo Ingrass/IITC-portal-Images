@@ -3,11 +3,11 @@
 Script / 脚本：
 https://raw.githubusercontent.com/Ingrass/IITC-portal-Images/refs/heads/main/portal-Images.user.js
 
-Loads a small portal image with a maximum length of 40px first for saving data.
+Loads small portal images with a maximum length of 40px first for saving data.
 <br>
 首先加载最大长度为40px的小图片以节省数据。
 
-When the mouse hovers over it, the image enlarges to show the normal resolution.
+When the mouse hovers over an image, it enlarges to show the normal resolution.
 <br> 
 当鼠标悬停时，图片会放大显示正常分辨率。
 
