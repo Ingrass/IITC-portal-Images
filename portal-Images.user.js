@@ -2,21 +2,31 @@
 // @author         lokpro
 // @name           IITC plugin: Portal Images
 // @category       Layer
-// @version        0.1
+// @version        0.5
 // @description    Show portal images on the map.
 // @id             portal-images
 // @namespace      https://github.com/IITC-CE/ingress-intel-total-conversion
-// @updateURL      https://raw.githubusercontent.com/Ingrass/IITC-portal-Images/refs/heads/main/portal-Images.meta.js
-// @downloadURL    https://raw.githubusercontent.com/Ingrass/IITC-portal-Images/refs/heads/main/portal-Images.user.js
+// @updateURL      https://raw.githubusercontent.com/Ingrass/IITC-portal-Images/main/portal-Images.meta.js
+// @downloadURL    https://raw.githubusercontent.com/Ingrass/IITC-portal-Images/main/portal-Images.user.js
 // @match          https://intel.ingress.com/*
 // @match          https://intel-x.ingress.com/*
 // @grant          none
 // ==/UserScript==
 
+/* This plugin is developed based on the Portal Names plugin by ZasoGD. */
+
 /*
- * This plugin is developed based on the Portal Names plugin by ZasoGD.
- * Original plugin URL: https://iitc.app/build/release/plugins/portal-names.user.js
- */
+TODO: settings for size and styles
+
+v0.5 2025-02-02
+- background color according to faction
+- border-width according to portal level
+- background color opacity according to portal level
+- add border radius (round portal images)
+
+v0.1 2025-01-22
+- basic functionality
+*/
 
 function wrapper(plugin_info) {
 // ensure plugin framework is there, even if iitc is not yet loaded
@@ -36,17 +46,41 @@ window.plugin.portalImages.labelLayerGroup = null;
 
 window.plugin.portalImages.setupCSS = function() {
 	$("<style>").prop("type", "text/css").html(/*css*/ `
+		/* Base styles*/
 		.plugin-portal-images {
-			width: 50px;
-			height: 50px;
 			transition: width 0.2s ease-in-out, height 0.2s ease-in-out, margin-left 0.2s ease-in-out, margin-top 0.2s ease-in-out;
 			transform-origin: center center;
 			background-size: contain;
 			background-position: center;
 			background-repeat: no-repeat;
-			background-color: #00ffff73;
-			border: 1px solid #00ffff73;
+			border-style: solid;
+			border-radius: 23px;
 		}
+
+		/* Styles for portal "team" 0-4 (none, res, enl, mac) */
+		${COLORS.map((color, team) => {
+			const [r, g, b] = color.match(/\w\w/g).map(hex => parseInt(hex, 16));
+			return /*css*/`
+				.plugin-portal-images-team${team} {
+					border-color: ${color}50; /* border color according to team */
+					background-color: rgba(${r}, ${g}, ${b}, var(--portalTeamColorOpacity)); /* background color opacity acccording to portal level */
+				}
+			`;
+		}).join('')}
+
+		/* Styles for portal levels */
+		${COLORS_LVL.map((color, level) => {
+			const portalTeamColorOpacity = 0.07 + (level / 8) * 0.4; /* background color opacity acccording to portal level */
+			const borderWidth = 1 + (level / 8) * 4; /* border width acccording to portal level */
+			return /*css*/`
+				.plugin-portal-images-level${level} {
+					--portalTeamColorOpacity: ${portalTeamColorOpacity}; /* background color opacity acccording to portal level */
+					border-width: ${borderWidth}px; /* border width acccording to portal level */
+				}
+			`;
+		}).join('')}
+
+		/* Styles for portal images on hover */
 		.plugin-portal-images:hover {
 			width: 512px !important;
 			height: 512px !important;
@@ -57,24 +91,22 @@ window.plugin.portalImages.setupCSS = function() {
 		}
 	`).appendTo("head");
 }
+
 window.plugin.portalImages.addLabel = function(guid, latLng) {
 	var previousLayer = window.plugin.portalImages.labelLayers[guid];
 	if (!previousLayer) {
 
-		var d = window.portals[guid].options.data;
+		var d = window.portals[guid].options;
 		//var portalName = d.title;
 
-		var portalImage = d.image; // Assuming d.image contains the URL of the image
-
-		var imgHtml = "";//`<img src="${portalImage}">`; // Adjust the size as needed
+		var portalImage = d.data.image; // Assuming d.image contains the URL of the image
 
 		const W = 50;
 
 		let icon = L.divIcon({
-			className: 'plugin-portal-images',
+			className: `plugin-portal-images   plugin-portal-images-team${d.team}   plugin-portal-images-level${d.level}`,
 			iconAnchor: [W/2, W/2], // Center the icon
 			iconSize: [W, W],
-			html: imgHtml
 		})
 
 		var label = L.marker(latLng, {
