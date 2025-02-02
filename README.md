@@ -1,6 +1,7 @@
 # IITC-portal-Images 图片能量塔
 
 Script / 脚本：
+<br>
 https://raw.githubusercontent.com/Ingrass/IITC-portal-Images/refs/heads/main/portal-Images.user.js
 
 Loads small portal images with a maximum length of 40px first for saving data.
@@ -19,5 +20,9 @@ Works with both CE and old IITC.
 <br> 
 适用于CE和旧版IITC。
 
-![image](https://github.com/user-attachments/assets/66d17a68-9505-42ee-b0a6-f01ed8b40e33)
-![image](https://github.com/user-attachments/assets/3761b62d-cb83-489c-b4d2-dd7d2fe73961)
+Border size and background opacity scale with portal level
+<br>
+边框粗細和背景透明度随 portal 等级变化
+
+![image](https://github.com/user-attachments/assets/6ac3880e-6326-43cd-a2d5-96a5f9c805a6)
+![image](https://github.com/user-attachments/assets/767c3ebc-ac97-4978-9c9a-e80abfaa91a6)
